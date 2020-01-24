@@ -49,6 +49,19 @@ public class DnsblCheckerExamples {
 
 			DnsblCheckResult result = customChecker.checkAny(CHECK_TARGET_IP);
 		}
+
+		{
+			for(IDnsblChecker checker : DnsblService.Catalog.values()) {
+
+				DnsblCheckResult result = checker.checkIpAddress(CHECK_TARGET_IP);
+				System.out.println(checker.getName());
+				System.out.println(CHECK_TARGET_IP);
+				System.out.println(result.getCheckTargetDomainName());
+				System.out.println(result.getReturnIpAddress());
+
+				System.out.println();
+			}
+		}
 	}
 
 }

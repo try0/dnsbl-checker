@@ -29,7 +29,7 @@ public class DnsblChecker implements IDnsblChecker {
 		 * Constructor.
 		 */
 		public ReadonlyDnsblChecker(IDnsblChecker... checkers) {
-			super(checkers);
+			super.addCheckers(checkers);
 		}
 
 		/**
@@ -37,8 +37,8 @@ public class DnsblChecker implements IDnsblChecker {
 		 *
 		 * @param chekcers
 		 */
-		public ReadonlyDnsblChecker(List<? extends IDnsblChecker> chekcers) {
-			super(chekcers);
+		public ReadonlyDnsblChecker(List<? extends IDnsblChecker> checkers) {
+			super.addCheckers(checkers);
 		}
 
 		@Override

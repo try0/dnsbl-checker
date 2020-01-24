@@ -33,22 +33,37 @@ public class DnsblService implements IDnsblChecker {
 	 *
 	 */
 	public static enum Catalog implements IDnsblChecker {
+
 	/**
 	 * SPAMHAUS ZEN
 	 */
-	SPAMHAUS(new DnsblService(
-			"SPAMHAUS ZEN",
-			"zen.spamhaus.org",
-			ip -> ip.startsWith("127.0.0")),
+	SPAMHAUS(
+			new DnsblService("SPAMHAUS ZEN", "zen.spamhaus.org", ip -> ip.startsWith("127.0.0")),
 			"https://www.spamhaus.org/zen/"),
 	/**
 	 * Barracuda Reputation Block List
 	 */
-	BARRACUDA(new DnsblService(
-			"Barracuda Reputation Block List",
-			"b.barracudacentral.org",
-			ip -> ip.equals("127.0.0.2")),
+	BARRACUDA(
+			new DnsblService("Barracuda Reputation Block List", "b.barracudacentral.org", DEFAULT_DETECTOR),
 			"http://barracudacentral.org/rbl"),
+	/**
+	 * SpamCop Blocking List
+	 */
+	SPAM_COP(
+			new DnsblService("SpamCop Blocking List", "bl.spamcop.net", DEFAULT_DETECTOR),
+			"https://www.spamcop.net/bl.shtml"),
+	/**
+	 * LashBack's unsubscribe blacklist
+	 */
+	LASHBACK(
+			new DnsblService("LashBack's unsubscribe blacklist", "ubl.unsubscore.com", DEFAULT_DETECTOR),
+			"https://blacklist.lashback.com/"),
+	/**
+	 * Passive Spam Block List
+	 */
+	PASSIVE_SPAM_BLOCK_LIST(
+			new DnsblService("Passive Spam Block List", "psbl.surriel.com", DEFAULT_DETECTOR),
+			"https://psbl.org/"),
 
 		;
 
@@ -68,10 +83,10 @@ public class DnsblService implements IDnsblChecker {
 		public final String serviceWebPageUrl;
 
 		/**
-		 * Constructor.
-		 *
-		 * @param service
-		 */
+			 * Constructor.
+			 *
+			 * @param service
+			 */
 		Catalog(DnsblService service, String serviceWebPageUrl) {
 			this.service = service;
 			this.serviceWebPageUrl = serviceWebPageUrl;
@@ -90,6 +105,8 @@ public class DnsblService implements IDnsblChecker {
 		}
 
 	}
+
+	public static final Predicate<String> DEFAULT_DETECTOR = ip -> ip.equals("127.0.0.2");
 
 	/**
 	 *

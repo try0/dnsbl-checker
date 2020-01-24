@@ -3,7 +3,7 @@ package jp.try0.jlib.dnsbl;
 import java.util.function.Predicate;
 
 /**
- * Dnsbl checker.
+ * Dnsbl checker interface.
  *
  * @author Ryo Tsunoda
  *
@@ -12,6 +12,7 @@ public interface IDnsblChecker extends Predicate<String> {
 
 	/**
 	 * Gets checker name.
+	 *
 	 * @return
 	 */
 	default String getName() {
@@ -19,12 +20,12 @@ public interface IDnsblChecker extends Predicate<String> {
 	}
 
 	/**
-	 * スパムサーバーか否かを判定します。
+	 * Check if the IP address is on the blacklist.
 	 *
-	 * @param mailSeverIpAddress
+	 * @param ipAddress
 	 * @return
 	 */
-	DnsblCheckResult checkIpAddress(String mailSeverIpAddress);
+	DnsblCheckResult checkIpAddress(String ipAddress);
 
 	/**
 	 * @see DnsblCheckResult#isListed()

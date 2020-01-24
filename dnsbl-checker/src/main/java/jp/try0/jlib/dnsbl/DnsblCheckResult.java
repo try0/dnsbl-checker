@@ -3,7 +3,7 @@ package jp.try0.jlib.dnsbl;
 import java.io.Serializable;
 
 /**
- * スパムチェック結果
+ * Check result.
  *
  * @author Ryo Tsunoda
  *
@@ -25,31 +25,31 @@ public class DnsblCheckResult implements Serializable {
 	}
 
 	/**
-	 * 判定結果
+	 * Blacklisted or not
 	 */
 	private final boolean isListed;
 	/**
-	 * 監視対象メールサーバーip
+	 * Check target ip
 	 */
 	private final String checkTargetIpAddress;
 	/**
-	 * ブラックリストサービスで確認するドメイン
+	 * Check target domain name
 	 */
 	private final String checkTargetDomainName;
 	/**
-	 * Aレコード
+	 * Dns query result ip
 	 */
 	private String returnIpAddress;
 	/**
-	 * 検出クラス
+	 * Checker
 	 */
 	private IDnsblChecker checker;
 
 	/**
-	 * コンストラクター
+	 * Constructor.
 	 *
-	 * @param isSpamServer
-	 * @param checkTargetIp
+	 * @param isListed
+	 * @param checkTargetIpAddress
 	 * @param checkTargetDomainName
 	 */
 	public DnsblCheckResult(boolean isListed, String checkTargetIpAddress, String checkTargetDomainName) {

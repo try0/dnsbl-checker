@@ -4,30 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DNSBLチェッカー
+ * DNSBL cheker.
  *
  * @author Ryo Tsunoda
  *
  */
 public class DnsblChecker implements IDnsblChecker {
 
+	/**
+	 * Readonly checker.
+	 *
+	 * @author Ryo Tsunoda
+	 *
+	 */
 	public static final class ReadonlyDnsblChecker extends DnsblChecker {
 
 		/**
-		 * コンストラクター
+		 * Constructor.
 		 */
 		public ReadonlyDnsblChecker() {
 		}
 
 		/**
-		 * コンストラクター
+		 * Constructor.
 		 */
 		public ReadonlyDnsblChecker(IDnsblChecker... checkers) {
 			super(checkers);
 		}
 
 		/**
-		 * コンストラクター
+		 * Constructor.
 		 *
 		 * @param chekcers
 		 */
@@ -36,7 +42,7 @@ public class DnsblChecker implements IDnsblChecker {
 		}
 
 		@Override
-		public DnsblChecker addChecker(IDnsblChecker ...checkers) {
+		public DnsblChecker addCheckers(IDnsblChecker ...checkers) {
 			throw new UnsupportedOperationException(getClass().getName() + " is readonly.");
 		}
 
@@ -66,25 +72,28 @@ public class DnsblChecker implements IDnsblChecker {
 	}
 
 	/**
-	 * チェック実装リスト
+	 * the checkers.
 	 */
 	private final List<IDnsblChecker> checkers = new ArrayList<>();
 
 	/**
-	 * コンストラクター
+	 * Constructor.
 	 */
 	public DnsblChecker() {
 	}
 
+
 	/**
-	 * コンストラクター
+	 * Constructor.
+	 *
+	 * @param checkers
 	 */
 	public DnsblChecker(IDnsblChecker... checkers) {
-		addChecker(checkers);
+		addCheckers(checkers);
 	}
 
 	/**
-	 * コンストラクター
+	 * Constructor.
 	 *
 	 * @param chekcers
 	 */
@@ -93,12 +102,12 @@ public class DnsblChecker implements IDnsblChecker {
 	}
 
 	/**
-	 * スパムサーバー判定処理実装を追加します。
+	 * Adds dnsbl checkers.
 	 *
-	 * @param service
+	 * @param checkers
 	 * @return
 	 */
-	public DnsblChecker addChecker(IDnsblChecker... checkers) {
+	public DnsblChecker addCheckers(IDnsblChecker... checkers) {
 		for (IDnsblChecker checker : checkers) {
 			this.checkers.add(checker);
 		}
@@ -106,9 +115,9 @@ public class DnsblChecker implements IDnsblChecker {
 	}
 
 	/**
-	 * スパムサーバー判定処理実装を追加します。
+	 * Adds dnsbl checkers.
 	 *
-	 * @param service
+	 * @param chekcers
 	 * @return
 	 */
 	public DnsblChecker addCheckers(List<? extends IDnsblChecker> chekcers) {
@@ -122,7 +131,7 @@ public class DnsblChecker implements IDnsblChecker {
 
 	private void requireCheckers() {
 		if (checkers == null || checkers.isEmpty()) {
-			throw new IllegalStateException("チェック処理が設定されていません。");
+			throw new IllegalStateException("No checkers.");
 		}
 	}
 
@@ -143,11 +152,23 @@ public class DnsblChecker implements IDnsblChecker {
 		return DnsblCheckResult.ok(ipAddress, "", this);
 	}
 
-	public DnsblCheckResult checkIpAddressAny(String ipAddress) {
+	/**
+	 * If detect that the IP is listed in Blacklist, return the result immediately.
+	 *
+	 * @param ipAddress
+	 * @return
+	 */
+	public DnsblCheckResult checkAny(String ipAddress) {
 		return checkIpAddress(ipAddress);
 	}
 
-	public List<DnsblCheckResult> checkIpAddressAll(String ipAddress) {
+	/**
+	 * Check all dnsbl services.
+	 *
+	 * @param ipAddress
+	 * @return
+	 */
+	public List<DnsblCheckResult> checkAll(String ipAddress) {
 		requireCheckers();
 
 		List<DnsblCheckResult> results = new ArrayList<DnsblCheckResult>();

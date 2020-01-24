@@ -10,10 +10,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * DNSBLチェッカー<br>
+ * DNSBL Service<br>
+ * <br>
  *
- * Dnsblサービスの一覧：{@link https://www.dnsbl.info/dnsbl-list.php}<br>
- * リスト入りのip確認できる：{@link https://talosintelligence.com/}
+ * References<br>
+ * Dnsbl list：{@link https://www.dnsbl.info/dnsbl-list.php}<br>
+ * Spam ip list：{@link https://talosintelligence.com/}
  *
  * @see https://www.dnsbl.info/dnsbl-list.php
  * @see https://talosintelligence.com/
@@ -24,30 +26,35 @@ import java.util.stream.Collectors;
  */
 public class DnsblService implements IDnsblChecker {
 
-
-
+	/**
+	 * Dnsbl service catalog.
+	 *
+	 * @author Ryo Tsunoda
+	 *
+	 */
 	public static enum Catalog implements IDnsblChecker {
-		/**
-		 *
-		 */
-		SPAMHAUS(new DnsblService(
-				"SPAMHAUS ZEN",
-				"zen.spamhaus.org",
-				ip -> ip.startsWith("127.0.0"),
-				"https://www.spamhaus.org/zen/")),
-		/**
-		 *
-		 */
-		BARRACUDA(new DnsblService(
-				"Barracuda Reputation Block List",
-				"b.barracudacentral.org",
-				ip -> ip.equals("127.0.0.2"),
-				"http://barracudacentral.org/rbl")),
+	/**
+	 * SPAMHAUS ZEN
+	 */
+	SPAMHAUS(new DnsblService(
+			"SPAMHAUS ZEN",
+			"zen.spamhaus.org",
+			ip -> ip.startsWith("127.0.0")),
+			"https://www.spamhaus.org/zen/"),
+	/**
+	 * Barracuda Reputation Block List
+	 */
+	BARRACUDA(new DnsblService(
+			"Barracuda Reputation Block List",
+			"b.barracudacentral.org",
+			ip -> ip.equals("127.0.0.2")),
+			"http://barracudacentral.org/rbl"),
 
 		;
 
 		static {
-			System.out.println(Catalog.class.getName() + " - Please confirm the use agreement of each service by yourself");
+			System.out.println(
+					Catalog.class.getName() + " - Please confirm the use agreement of each service by yourself");
 		}
 
 		/**
@@ -56,12 +63,18 @@ public class DnsblService implements IDnsblChecker {
 		DnsblService service;
 
 		/**
+		 * Dnsbl service web page url
+		 */
+		public final String serviceWebPageUrl;
+
+		/**
 		 * Constructor.
 		 *
 		 * @param service
 		 */
-		Catalog(DnsblService service) {
+		Catalog(DnsblService service, String serviceWebPageUrl) {
 			this.service = service;
+			this.serviceWebPageUrl = serviceWebPageUrl;
 		}
 
 		/**
@@ -72,10 +85,13 @@ public class DnsblService implements IDnsblChecker {
 			return service.checkIpAddress(mailSeverIpAddress);
 		}
 
+		public String getServiceWebPageUrl() {
+			return serviceWebPageUrl;
+		}
+
 	}
 
 	/**
-	 * ipアドレスを逆転させます。
 	 *
 	 * @param ipAddress
 	 * @return
@@ -91,43 +107,25 @@ public class DnsblService implements IDnsblChecker {
 	 */
 	public final String serviceName;
 	/**
-	 * Dnsbl service web page url
-	 */
-	public final String serviceWebPageUrl;
-	/**
 	 * Dnsbl service domain suffix
 	 */
 	public final String serviceDomainSuffix;
 	/**
-	 * validater
+	 * detector
 	 */
-	public final Predicate<String> validator;
+	public final Predicate<String> detector;
 
 	/**
-	 * コンストラクター
+	 * Constructor.
 	 *
 	 * @param serviceName
 	 * @param serviceDomainSuffix
-	 * @param validator
+	 * @param detector
 	 */
-	DnsblService(String serviceName, String serviceDomainSuffix, Predicate<String> validator) {
-		this(serviceName, serviceDomainSuffix, validator, "");
-	}
-
-	/**
-	 * コンストラクター
-	 *
-	 * @param serviceName
-	 * @param serviceDomainSuffix
-	 * @param validator
-	 * @param serviceWebPageUrl
-	 */
-	DnsblService(String serviceName, String serviceDomainSuffix, Predicate<String> validator,
-			String serviceWebPageUrl) {
+	DnsblService(String serviceName, String serviceDomainSuffix, Predicate<String> detector) {
 		this.serviceName = serviceName;
 		this.serviceDomainSuffix = serviceDomainSuffix;
-		this.validator = validator;
-		this.serviceWebPageUrl = serviceWebPageUrl;
+		this.detector = detector;
 	}
 
 	/**
@@ -139,21 +137,19 @@ public class DnsblService implements IDnsblChecker {
 		String checkTargetDomainName = createCheckTargetDomainName(ipAddress);
 
 		try {
-			// ドメインからipアドレスを引く
 			InetAddress addr = InetAddress.getByName(checkTargetDomainName);
 			String hostAddress = addr.getHostAddress();
 
-			// 各サービスの判定処理を実行する
-			if (getValidator().test(hostAddress)) {
+			// detect
+			if (getDetector().test(hostAddress)) {
 				return DnsblCheckResult.ng(ipAddress, checkTargetDomainName, hostAddress, this);
 			}
 
 		} catch (UnknownHostException ignore) {
-			// ドメインが見つからない⇒リストアップされていない
+			// Not blacklisted
 			return DnsblCheckResult.ok(ipAddress, checkTargetDomainName, this);
 		}
 
-		// デフォルトOK
 		return DnsblCheckResult.ok(ipAddress, checkTargetDomainName, this);
 	}
 
@@ -170,16 +166,12 @@ public class DnsblService implements IDnsblChecker {
 		return serviceName;
 	}
 
-	public String getServiceWebPageUrl() {
-		return serviceWebPageUrl;
-	}
-
 	public String getServiceDomainSuffix() {
 		return serviceDomainSuffix;
 	}
 
-	public Predicate<String> getValidator() {
-		return validator;
+	public Predicate<String> getDetector() {
+		return detector;
 	}
 
 }

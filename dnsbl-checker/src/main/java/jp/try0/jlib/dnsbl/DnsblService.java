@@ -103,6 +103,11 @@ public class DnsblService implements IDnsblChecker {
 			return serviceWebPageUrl;
 		}
 
+		@Override
+		public String getName() {
+			return service.getName();
+		}
+
 	}
 
 	public static final Predicate<String> DEFAULT_DETECTOR = ip -> ip.equals("127.0.0.2");

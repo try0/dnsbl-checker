@@ -4,7 +4,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -114,9 +113,9 @@ public class DnsblService implements IDnsblChecker {
 	 * @return
 	 */
 	private static String reverseIpAddress(String ipAddress) {
-		List<String> ipNums = Arrays.asList(ipAddress.split(Pattern.quote(".")));
-		Collections.reverse(ipNums);
-		return ipNums.stream().collect(Collectors.joining("."));
+		String[] ipNums = ipAddress.split(Pattern.quote("."));
+		Collections.reverse(Arrays.asList(ipNums));
+		return Arrays.stream(ipNums).collect(Collectors.joining("."));
 	}
 
 	/**

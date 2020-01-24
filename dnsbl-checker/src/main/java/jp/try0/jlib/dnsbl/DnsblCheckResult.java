@@ -1,14 +1,12 @@
 package jp.try0.jlib.dnsbl;
 
-import java.io.Serializable;
-
 /**
  * Check result.
  *
  * @author Ryo Tsunoda
  *
  */
-public class DnsblCheckResult implements Serializable {
+public class DnsblCheckResult {
 
 	public static DnsblCheckResult ok(String ipAddress, String checkTargetDomainName, IDnsblChecker checker) {
 		DnsblCheckResult result = new DnsblCheckResult(false, ipAddress, checkTargetDomainName);

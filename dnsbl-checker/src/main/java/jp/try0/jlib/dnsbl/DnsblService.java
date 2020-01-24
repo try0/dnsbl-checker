@@ -82,10 +82,10 @@ public class DnsblService implements IDnsblChecker {
 		public final String serviceWebPageUrl;
 
 		/**
-			 * Constructor.
-			 *
-			 * @param service
-			 */
+		 * Constructor.
+		 *
+		 * @param service
+		 */
 		Catalog(DnsblService service, String serviceWebPageUrl) {
 			this.service = service;
 			this.serviceWebPageUrl = serviceWebPageUrl;

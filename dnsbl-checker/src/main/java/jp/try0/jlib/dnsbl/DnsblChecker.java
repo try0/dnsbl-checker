@@ -42,7 +42,7 @@ public class DnsblChecker implements IDnsblChecker {
 		}
 
 		@Override
-		public DnsblChecker addCheckers(IDnsblChecker ...checkers) {
+		public DnsblChecker addCheckers(IDnsblChecker... checkers) {
 			throw new UnsupportedOperationException(getClass().getName() + " is readonly.");
 		}
 
@@ -58,17 +58,14 @@ public class DnsblChecker implements IDnsblChecker {
 
 	}
 
-
-	private static class Holder {
-		static final DnsblChecker DEFAULT_INSTANCE = new ReadonlyDnsblChecker(DnsblService.Catalog.values());
-	}
+	private static final DnsblChecker DEFAULT_INSTANCE = new ReadonlyDnsblChecker(DnsblService.Catalog.values());
 
 	/**
 	 * @see DnsblService#values()
 	 * @return
 	 */
 	public static DnsblChecker getDefaultInstance() {
-		return Holder.DEFAULT_INSTANCE;
+		return DEFAULT_INSTANCE;
 	}
 
 	/**
@@ -81,7 +78,6 @@ public class DnsblChecker implements IDnsblChecker {
 	 */
 	public DnsblChecker() {
 	}
-
 
 	/**
 	 * Constructor.

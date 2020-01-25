@@ -67,8 +67,15 @@ public class DnsblService implements IDnsblChecker {
 		;
 
 		static {
+			System.out.println();
 			System.out.println(
 					Catalog.class.getName() + " - Please confirm the use agreement of each service by yourself");
+
+			for (Catalog service : values()) {
+				System.out.println(service.getName() + " - " + service.getServiceWebPageUrl());
+			}
+
+			System.out.println();
 		}
 
 		/**
